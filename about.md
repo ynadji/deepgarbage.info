@@ -1,11 +1,11 @@
 ---
 layout: page
-title: About
+title: About Deep Garbage
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
+sup punks we're some phd students at georgia tech rootin' through your garbage:
 
-You can find the source code for the Jekyll new theme at: [github.com/jglovier/jekyll-new](https://github.com/jglovier/jekyll-new)
-
-You can find the source code for Jekyll at [github.com/jekyll/jekyll](https://github.com/jekyll/jekyll)
+* [Casey Battaglino](http://www.cc.gatech.edu/grads/c/cbattagl/)
+* [Yacin Nadji](http://www.cc.gatech.edu/~ynadji3/)
+* [Robert Pienta](http://www.cc.gatech.edu/~rpienta3/)
