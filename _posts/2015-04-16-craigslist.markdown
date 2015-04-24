@@ -19,6 +19,13 @@ Curiously, the bulk of the distribution does not always fall on around the weeke
 <!-- Ugly D3 code from here on out. -->
 <dd>
 <meta charset="utf-8">
+<!-- BOOTSTRAP, JQUERY, D3 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <style>
 body {
   font: 10px sans-serif;
@@ -68,8 +75,8 @@ body {
   left: 0;
 }
 </style>
-
-Select yo cities: <select id="select-city">
+<div class = "container" id="top-padded">
+  Select yo cities: <select id="select-city">
   <option value="">Total</option>
   <option value="atlanta">Atlanta</option>
   <option value="austin">Austin</option>
@@ -120,15 +127,50 @@ Select yo cities: <select id="select-city">
   <option value="seattle">Seattle</option>
   <option value="sfbay">Man Bay (Bay Area)</option>
   <option value="washingtondc"> Washington DC </option>
-</select>
-<div id="poopchute"></div>
+</select> 
+<div id="poopchute">
+</div>
+<div id="dickchute">
+  <div class="row" id="funk_row">
+    <div class="col-sm-5">
+      <div id="pbod1" class="panel panel-default">
+        <div class="panel-body1">
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <div id="pbod2" class="panel panel-default">
+        <div class="panel-body2">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Button trigger modal -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Dickz</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 $("#select-city").change(city_dropdown);
 $("#select-city1").change(city_dropdown);
+// hide that ug shi
+d3.select('#pbod1').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
+d3.select('#pbod2').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
 
 var city1 = "all", city2 = "all";
 
@@ -161,20 +203,59 @@ var tip = d3.tip()
   .html(function(d) {
     return "<strong>Frequency:</strong> <span style='color:lightgray'>" + (d.value*100).toFixed(2) + "%</span>"+"<br/><strong>Count:</strong> <span style='color:lightgray'>" + d.count + "</span>";
   })
+
+function click_dick(){
+  // Modal
+  $('#myModal').modal('show')
+  var temp_city = ""
+  if (this.id === 'pbod1') {
+    temp_city = city1;
+  } else {
+    temp_city = city2;
+  }
+  d3.select("div.modal-body").append("img")
+    .attr('src', '/images/craigslist/'+temp_city+'-trigram.png')
+    .attr('id', 'dickforce2')
+  
+}
+
 function city_dropdown() {
     if ($(this)[0].id === 'select-city') {
     if ($(this).val() != "") {
       city1 = $(this).val()
+      d3.select('#dickforce1').remove()
+      d3.select('#pbod1').style('display', '')
+      d3.select(".panel-body1").append("img")
+        .attr('src', '/images/craigslist/'+city1+'-trigram.png')
+        .attr('id', 'dickforce1')
+        // .style('width', '150px')
+        // .style('height', '150px')
     }
   } else {
     if ($(this).val() != "") {
       city2 = $(this).val()
+      d3.select('#dickforce2').remove()
+      d3.select('#pbod2').style('display', '')
+      d3.select(".panel-body2").append("img")
+        .attr('src', '/images/craigslist/'+city2+'-trigram.png')
+        .attr('id', 'dickforce2')
+        // .style('width', '150px')
+        // .style('height', '150px')
     }
+  }
+  if (city1 == city2) {
+    d3.select('#dickforce1').remove()
+    d3.select('#dickforce2').remove()
+    d3.select('#pbod2').style('display', '')
+    d3.select(".panel-body1").append("img")
+      .attr('src', '/images/craigslist/'+city1+'-trigram.png')
+      .attr('id', 'dickforce1')
   }
   $('div#poopchute').empty();
   barchart('/data/dookie_craigslist/male_days.csv', 'Derp', 'Male')
   barchart('/data/dookie_craigslist/female_days.csv', 'Derp', 'Female')
   barchart('/data/dookie_craigslist/transgender_days.csv', 'Derp', 'Transgender')
+
 }
 
 
