@@ -30,7 +30,6 @@ Curiously, the bulk of the distribution does not always fall on around the weeke
 body {
   font: 10px sans-serif;
 }
-
 .axis path,
 .axis line {
   fill: none;
@@ -75,7 +74,7 @@ body {
   left: 0;
 }
 </style>
-<div class = "container" id="top-padded">
+<div class = "container-fluid" id="top-padded">
   Select yo cities: <select id="select-city">
   <option value="">Total</option>
   <option value="atlanta">Atlanta</option>
@@ -129,16 +128,34 @@ body {
   <option value="washingtondc"> Washington DC </option>
 </select> 
 <div id="poopchute">
+  <div class="row" id="funk_row">
+    <div class="col-sm-12">
+      <div id="chute_female" class="panel panel-default">
+      </div>
+    </div>
+  </div>
+  <div class="row" id="funk_row">
+    <div class="col-sm-12">
+      <div id="chute_male" class="panel panel-default">
+      </div>
+    </div>
+  </div>
+  <div class="row" id="funk_row">
+    <div class="col-sm-12">
+      <div id="chute_trans" class="panel panel-default">
+      </div>
+    </div>
+  </div>
 </div>
 <div id="dickchute">
   <div class="row" id="funk_row">
-    <div class="col-sm-5">
+    <div class="col-sm-6">
       <div id="pbod1" class="panel panel-default">
         <div class="panel-body1">
         </div>
       </div>
     </div>
-    <div class="col-sm-5">
+    <div class="col-sm-6">
       <div id="pbod2" class="panel panel-default">
         <div class="panel-body2">
         </div>
@@ -166,36 +183,31 @@ body {
   </div>
 </div>
 <script>
+var something_drawn = false;
+$( window ).resize(function() {
+  if (something_drawn) {
+    $('div#chute_male').empty();
+    $('div#chute_female').empty();
+    $('div#chute_trans').empty();
+    barchart('/data/dookie_craigslist/male_days.csv', '#chute_male', 'Male')
+    barchart('/data/dookie_craigslist/female_days.csv', '#chute_female', 'Female')
+    barchart('/data/dookie_craigslist/transgender_days.csv', '#chute_trans', 'Transgender')
+  }
+});
+
 $("#select-city").change(city_dropdown);
 $("#select-city1").change(city_dropdown);
 // hide that ug shi
 d3.select('#pbod1').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
 d3.select('#pbod2').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
 
-var city1 = "all", city2 = "all";
+var city1 = "", city2 = "";
 
 var margin = {top: 40, right: 20, bottom: 30, left: 40},
     width = 560 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
 var formatPercent = d3.format(".0%");
-
-var x0 = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .3);
-
-var x1 = d3.scale.ordinal();
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x0)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(formatPercent);
 
 var tip = d3.tip()
   .attr('class', 'd3-tip')
@@ -213,10 +225,10 @@ function click_dick(){
   } else {
     temp_city = city2;
   }
+  d3.select('#dickforce').remove()
   d3.select("div.modal-body").append("img")
     .attr('src', '/images/craigslist/'+temp_city+'-trigram.png')
-    .attr('id', 'dickforce2')
-  
+    .attr('id', 'dickforce')
 }
 
 function city_dropdown() {
@@ -251,18 +263,52 @@ function city_dropdown() {
       .attr('src', '/images/craigslist/'+city1+'-trigram.png')
       .attr('id', 'dickforce1')
   }
-  $('div#poopchute').empty();
-  barchart('/data/dookie_craigslist/male_days.csv', 'Derp', 'Male')
-  barchart('/data/dookie_craigslist/female_days.csv', 'Derp', 'Female')
-  barchart('/data/dookie_craigslist/transgender_days.csv', 'Derp', 'Transgender')
+  something_drawn = true;
+  $('div#chute_male').empty();
+  $('div#chute_female').empty();
+  $('div#chute_trans').empty();
+  barchart('/data/dookie_craigslist/male_days.csv', '#chute_male', 'Male')
+  barchart('/data/dookie_craigslist/female_days.csv', '#chute_female', 'Female')
+  barchart('/data/dookie_craigslist/transgender_days.csv', '#chute_trans', 'Transgender')
 
 }
 
+format_me = {"atlanta":"Atlanta","austin":"Austin","boston":"Boston","chicago":"Chicago","dallas":"Dallas","denver":"Denver","detroit":"Detroit","houston":"Houston","lasvegas":"Las Vegas","losangeles":"Los Angeles","miami":"Miasma","minneapolis":"Minneapolis","newyork":"New York","orangecounty":"Orange County","philadelphia":"Philadelphia","phoenix":"Phoenix","portland":"Portland","raleigh":"Raleigh","sacramento":"Sacramento","sandiego":"Sand Diego","seattle":"Seattle","sfbay":"Bay Area","washingtondc":"Washington DC" }
 
-function barchart(filename, xlabel, title){
+function get_pop_str(data, city){
+  ret_str = " "
+  var ind = (city === city1) ? 0 : 1; 
+  var city_pop = d3.sum( data.map(function(d){ return d.cities[ind].count; } ));
+  return ": " + city_pop;
+}
+
+function barchart(filename, divname, title){
+  
+  width = $(divname).width() - margin.left - margin.right,
+  height = 300 - margin.top - margin.bottom;
+  
+  // Must do once pages is drawn
+  var x0 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .3);
+
+  var x1 = d3.scale.ordinal();
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(formatPercent);
+
+
   var color = d3.scale.ordinal().range(['#67a9cf', '#ef8a62'])
   // var color_scale = d3.scale.ordinal().range(["#8aa236", "#7a296a", "#27576b", "#AA7539"]);
-  var svg = d3.select("div#poopchute").append("svg")
+  var svg = d3.select(divname).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -303,7 +349,7 @@ function barchart(filename, xlabel, title){
           .attr("dy", ".71em")
           .style("text-anchor", "end")
           .text("Population");
-    
+
       svg.append('text')
         .attr('y', -15)
         .attr('x', width/2)
@@ -333,7 +379,7 @@ function barchart(filename, xlabel, title){
           .data(cityNames.slice().reverse())
         .enter().append("g")
           .attr("class", "legend")
-          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+          .attr("transform", function(d, i) { return "translate(0," + (i * -20)  + ")"; });
 
       legend.append("rect")
           .attr("x", width - 18)
@@ -346,7 +392,7 @@ function barchart(filename, xlabel, title){
           .attr("y", 9)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
-          .text(function(d) { return d; });
+          .text(function(d) { return format_me[d] + get_pop_str(data, d); });
     }
   });
 }
