@@ -1,6 +1,6 @@
 # Site settings
 title: Deep Garbage
-email: deepgarbage@gmail.com
+email: d33pgarbage@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   Rooting through your data garbage.
 baseurl: "" # the subpath of your site, e.g. /blog/
