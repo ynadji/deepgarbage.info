@@ -200,7 +200,9 @@ $("#select-city1").change(city_dropdown);
 // hide that ug shi
 d3.select('#pbod1').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
 d3.select('#pbod2').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
-
+d3.select('#chute_male').style('display', 'none')
+d3.select('#chute_female').style('display', 'none')
+d3.select('#chute_trans').style('display', 'none')
 var city1 = "", city2 = "";
 
 var margin = {top: 40, right: 20, bottom: 30, left: 40},
@@ -258,15 +260,22 @@ function city_dropdown() {
   if (city1 == city2) {
     d3.select('#dickforce1').remove()
     d3.select('#dickforce2').remove()
-    d3.select('#pbod2').style('display', '')
+    d3.select('#pbod1').style('display', '')
+    d3.select('#pbod2').style('display', 'none')
     d3.select(".panel-body1").append("img")
       .attr('src', '/images/craigslist/'+city1+'-trigram.png')
       .attr('id', 'dickforce1')
   }
   something_drawn = true;
+  // Take out anything if its there
   $('div#chute_male').empty();
   $('div#chute_female').empty();
   $('div#chute_trans').empty();
+  // display that shit with borders (which were hidden)
+  d3.select('#chute_male').style('display', '')
+  d3.select('#chute_female').style('display', '')
+  d3.select('#chute_trans').style('display', '')
+  // Pop with new shit
   barchart('/data/dookie_craigslist/male_days.csv', '#chute_male', 'Male')
   barchart('/data/dookie_craigslist/female_days.csv', '#chute_female', 'Female')
   barchart('/data/dookie_craigslist/transgender_days.csv', '#chute_trans', 'Transgender')
@@ -379,7 +388,7 @@ function barchart(filename, divname, title){
           .data(cityNames.slice().reverse())
         .enter().append("g")
           .attr("class", "legend")
-          .attr("transform", function(d, i) { return "translate(0," + (i * -20)  + ")"; });
+          .attr("transform", function(d, i) { return "translate(0," + (i * 20)  + ")"; });
 
       legend.append("rect")
           .attr("x", width - 18)
