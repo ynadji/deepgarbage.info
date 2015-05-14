@@ -76,7 +76,8 @@ body {
 </style>
 <div class = "container-fluid" id="top-padded">
   Select yo cities: <select id="select-city">
-  <option value="">Total</option>
+  <option value="">Select a city.</option>
+  <option value="Total">Total</option>
   <option value="atlanta">Atlanta</option>
   <option value="austin">Austin</option>
   <option value="boston">Boston</option>
@@ -102,7 +103,8 @@ body {
   <option value="washingtondc"> Washington DC </option>
 </select>
 <select id="select-city1">
-  <option value="">Total</option>
+  <option value="">Select a city.</option>
+  <option value="Total">Total</option>
   <option value="atlanta">Atlanta</option>
   <option value="austin">Austin</option>
   <option value="boston">Boston</option>
@@ -282,12 +284,13 @@ function city_dropdown() {
 
 }
 
-format_me = {"atlanta":"Atlanta","austin":"Austin","boston":"Boston","chicago":"Chicago","dallas":"Dallas","denver":"Denver","detroit":"Detroit","houston":"Houston","lasvegas":"Las Vegas","losangeles":"Los Angeles","miami":"Miasma","minneapolis":"Minneapolis","newyork":"New York","orangecounty":"Orange County","philadelphia":"Philadelphia","phoenix":"Phoenix","portland":"Portland","raleigh":"Raleigh","sacramento":"Sacramento","sandiego":"Sand Diego","seattle":"Seattle","sfbay":"Bay Area","washingtondc":"Washington DC" }
+format_me = {"Total":"Total","atlanta":"Atlanta","austin":"Austin","boston":"Boston","chicago":"Chicago","dallas":"Dallas","denver":"Denver","detroit":"Detroit","houston":"Houston","lasvegas":"Las Vegas","losangeles":"Los Angeles","miami":"Miasma","minneapolis":"Minneapolis","newyork":"New York","orangecounty":"Orange County","philadelphia":"Philadelphia","phoenix":"Phoenix","portland":"Portland","raleigh":"Raleigh","sacramento":"Sacramento","sandiego":"Sand Diego","seattle":"Seattle","sfbay":"Bay Area","washingtondc":"Washington DC" }
 
 function get_pop_str(data, city){
   ret_str = " "
-  var ind = (city === city1) ? 0 : 1; 
-  var city_pop = d3.sum( data.map(function(d){ return d.cities[ind].count; } ));
+  var ind = (city === city1) ? 0 : 1;
+  if (city1 === "") { ind = 0; }
+  var city_pop = d3.sum( data.map(function(d){ console.log(d.cities); return d.cities[ind].count; } ));
   return ": " + city_pop;
 }
 
