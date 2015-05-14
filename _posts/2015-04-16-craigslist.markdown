@@ -5,16 +5,16 @@ date:   2015-04-16 18:38:49
 categories: jekyll update
 ---
 
-Remember that time I saw you in the airport waiting in line to buy a Cinnabon? 
+Remember that time I saw you in the airport waiting in line to buy a Cinnabon?
 We made eye contact, but then I was too shy to scoot my [Rascal R6 300](http://www.scootaround.com/files/manuals/electricmobility/Electric%20Mobility%20Rascal%20R6%20300,%20R6%20300HD%20Scooter%20Owner%27s%20Manual.pdf "In Ferrari-red.") up to you to talk.
-You were wearing tight leopard skin leggings, you were huge, you were beautiful. 
-You know I wanted to fly a helicopter right up that a$$. 
+You were wearing tight leopard skin leggings, you were huge, you were beautiful.
+You know I wanted to fly a helicopter right up that a$$.
 
 
 We happened across hundreds of fine Craigslist missed connections...
 
 
-We analyzed the popularity of missed connections posts by day, split by gender of the poster for large US cities. 
+We analyzed the popularity of missed connections posts by day, split by gender of the poster for large US cities.
 Curiously, the bulk of the distribution does not always fall on around the weekend.
 <!-- Ugly D3 code from here on out. -->
 <dd>
@@ -126,7 +126,7 @@ body {
   <option value="seattle">Seattle</option>
   <option value="sfbay">Man Bay (Bay Area)</option>
   <option value="washingtondc"> Washington DC </option>
-</select> 
+</select>
 <div id="poopchute">
   <div class="row" id="funk_row">
     <div class="col-sm-12">
@@ -162,6 +162,11 @@ body {
       </div>
     </div>
   </div>
+</div>
+<h4>Marky markov generated sentences!!1</h4>
+<div id="markov-city1">
+</div>
+<div id="markov-city2">
 </div>
 </div>
 <!-- Button trigger modal -->
@@ -237,6 +242,18 @@ function city_dropdown() {
     if ($(this)[0].id === 'select-city') {
     if ($(this).val() != "") {
       city1 = $(this).val()
+      $('div#markov-city1').empty();
+
+      $.get('/data/dookie_craigslist/marky/'+city1+'.txt.sentences', function(text) {
+          var lineNumber = Math.floor(Math.random() * 10000);
+          var randomLine = text.split("\n")[lineNumber];
+          d3.select('#markov-city1').append("p")
+            .style('font-weight', 'bold')
+            .text(format_me[city1]);
+          d3.select('#markov-city1').append("p")
+            .text(randomLine);
+      });
+
       d3.select('#dickforce1').remove()
       d3.select('#pbod1').style('display', '')
       d3.select(".panel-body1").append("img")
@@ -244,6 +261,7 @@ function city_dropdown() {
         .attr('id', 'dickforce1')
         // .style('width', '150px')
         // .style('height', '150px')
+
     }
   } else {
     if ($(this).val() != "") {
@@ -255,6 +273,17 @@ function city_dropdown() {
         .attr('id', 'dickforce2')
         // .style('width', '150px')
         // .style('height', '150px')
+
+  $('div#markov-city2').empty();
+  $.get('/data/dookie_craigslist/marky/'+city2+'.txt.sentences', function(text) {
+    var lineNumber = Math.floor(Math.random() * 10000);
+    var randomLine = text.split("\n")[lineNumber];
+    d3.select('#markov-city2').append("p")
+      .style('font-weight', 'bold')
+      .text(format_me[city2]);
+    d3.select('#markov-city2').append("p")
+      .text(randomLine);
+  });
     }
   }
   if (city1 == city2) {
@@ -286,16 +315,16 @@ format_me = {"atlanta":"Atlanta","austin":"Austin","boston":"Boston","chicago":"
 
 function get_pop_str(data, city){
   ret_str = " "
-  var ind = (city === city1) ? 0 : 1; 
+  var ind = (city === city1) ? 0 : 1;
   var city_pop = d3.sum( data.map(function(d){ return d.cities[ind].count; } ));
   return ": " + city_pop;
 }
 
 function barchart(filename, divname, title){
-  
+
   width = $(divname).width() - margin.left - margin.right,
   height = 300 - margin.top - margin.bottom;
-  
+
   // Must do once pages is drawn
   var x0 = d3.scale.ordinal()
       .rangeRoundBands([0, width], .3);
@@ -333,7 +362,7 @@ function barchart(filename, divname, title){
           .attr("class", "x axis")
           .attr("transform", "translate(0," + height + ")")
           .call(xAxis);
-    } else {    
+    } else {
       var cityNames = d3.keys(data[0]).filter(function(key) { return key !== "Day" && (key === city2 || key === city1); });
 
       data.forEach(function(d) {
