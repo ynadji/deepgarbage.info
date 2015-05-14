@@ -166,6 +166,7 @@ body {
   </div>
 </div>
 <h4>Marky markov generated sentences!!1</h4>
+<button type="button" id="regensentence">Regenerate</button>
 <div id="markov-city1">
 </div>
 <div id="markov-city2">
@@ -191,6 +192,9 @@ body {
 </div>
 <script>
 var something_drawn = false;
+var city1_sentences = [];
+var city2_sentences = [];
+
 $( window ).resize(function() {
   if (something_drawn) {
     $('div#chute_male').empty();
@@ -240,6 +244,24 @@ function click_dick(){
     .attr('id', 'dickforce')
 }
 
+function new_sentences() {
+  var lineNumber = Math.floor(Math.random() * 10000);
+  var randomLine = city1_sentences[lineNumber];
+  d3.select('#markov-city1').append("p")
+    .text(randomLine);
+
+  var lineNumber = Math.floor(Math.random() * 10000);
+  var randomLine = city2_sentences[lineNumber];
+  d3.select('#markov-city2').append("p")
+    .text(randomLine);
+}
+
+$(function(){
+  $('#regensentence').click(function() {
+    new_sentences();
+  });
+});
+
 function city_dropdown() {
     if ($(this)[0].id === 'select-city') {
     if ($(this).val() != "") {
@@ -247,8 +269,9 @@ function city_dropdown() {
       $('div#markov-city1').empty();
 
       $.get('/data/dookie_craigslist/marky/'+city1+'.txt.sentences', function(text) {
+          city1_sentences = text.split("\n");
           var lineNumber = Math.floor(Math.random() * 10000);
-          var randomLine = text.split("\n")[lineNumber];
+          var randomLine = city1_sentences[lineNumber];
           d3.select('#markov-city1').append("p")
             .style('font-weight', 'bold')
             .text(format_me[city1]);
@@ -278,8 +301,9 @@ function city_dropdown() {
 
   $('div#markov-city2').empty();
   $.get('/data/dookie_craigslist/marky/'+city2+'.txt.sentences', function(text) {
+    city2_sentences = text.split("\n");
     var lineNumber = Math.floor(Math.random() * 10000);
-    var randomLine = text.split("\n")[lineNumber];
+    var randomLine = city2_sentences[lineNumber];
     d3.select('#markov-city2').append("p")
       .style('font-weight', 'bold')
       .text(format_me[city2]);
