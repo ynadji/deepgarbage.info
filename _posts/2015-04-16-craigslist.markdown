@@ -19,11 +19,17 @@ Curiously, the bulk of the distribution does not always fall on around the weeke
 <!-- Ugly D3 code from here on out. -->
 <dd>
 <meta charset="utf-8">
+<!-- BOOTSTRAP, JQUERY, D3 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <style>
 body {
   font: 10px sans-serif;
 }
-
 .axis path,
 .axis line {
   fill: none;
@@ -68,8 +74,8 @@ body {
   left: 0;
 }
 </style>
-
-Select yo cities: <select id="select-city">
+<div class = "container-fluid" id="top-padded">
+  Select yo cities: <select id="select-city">
   <option value="">Total</option>
   <option value="atlanta">Atlanta</option>
   <option value="austin">Austin</option>
@@ -120,17 +126,84 @@ Select yo cities: <select id="select-city">
   <option value="seattle">Seattle</option>
   <option value="sfbay">Man Bay (Bay Area)</option>
   <option value="washingtondc"> Washington DC </option>
-</select>
-<div id="poopchute"></div>
+</select> 
+<div id="poopchute">
+  <div class="row" id="funk_row">
+    <div class="col-sm-12">
+      <div id="chute_female" class="panel panel-default">
+      </div>
+    </div>
+  </div>
+  <div class="row" id="funk_row">
+    <div class="col-sm-12">
+      <div id="chute_male" class="panel panel-default">
+      </div>
+    </div>
+  </div>
+  <div class="row" id="funk_row">
+    <div class="col-sm-12">
+      <div id="chute_trans" class="panel panel-default">
+      </div>
+    </div>
+  </div>
+</div>
+<div id="dickchute">
+  <div class="row" id="funk_row">
+    <div class="col-sm-6">
+      <div id="pbod1" class="panel panel-default">
+        <div class="panel-body1">
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div id="pbod2" class="panel panel-default">
+        <div class="panel-body2">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Button trigger modal -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Dickz</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
+var something_drawn = false;
+$( window ).resize(function() {
+  if (something_drawn) {
+    $('div#chute_male').empty();
+    $('div#chute_female').empty();
+    $('div#chute_trans').empty();
+    barchart('/data/dookie_craigslist/male_days.csv', '#chute_male', 'Male')
+    barchart('/data/dookie_craigslist/female_days.csv', '#chute_female', 'Female')
+    barchart('/data/dookie_craigslist/transgender_days.csv', '#chute_trans', 'Transgender')
+  }
+});
+
 $("#select-city").change(city_dropdown);
 $("#select-city1").change(city_dropdown);
-
-var city1 = "all", city2 = "all";
+// hide that ug shi
+d3.select('#pbod1').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
+d3.select('#pbod2').style('display', 'none').style('cursor', 'pointer').on('click', click_dick)
+d3.select('#chute_male').style('display', 'none')
+d3.select('#chute_female').style('display', 'none')
+d3.select('#chute_trans').style('display', 'none')
+var city1 = "", city2 = "";
 
 var margin = {top: 40, right: 20, bottom: 30, left: 40},
     width = 560 - margin.left - margin.right,
@@ -138,50 +211,113 @@ var margin = {top: 40, right: 20, bottom: 30, left: 40},
 
 var formatPercent = d3.format(".0%");
 
-var x0 = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .3);
-
-var x1 = d3.scale.ordinal();
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x0)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickFormat(formatPercent);
-
 var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
     return "<strong>Frequency:</strong> <span style='color:lightgray'>" + (d.value*100).toFixed(2) + "%</span>"+"<br/><strong>Count:</strong> <span style='color:lightgray'>" + d.count + "</span>";
   })
+
+function click_dick(){
+  // Modal
+  $('#myModal').modal('show')
+  var temp_city = ""
+  if (this.id === 'pbod1') {
+    temp_city = city1;
+  } else {
+    temp_city = city2;
+  }
+  d3.select('#dickforce').remove()
+  d3.select("div.modal-body").append("img")
+    .attr('src', '/images/craigslist/'+temp_city+'-trigram.png')
+    .attr('id', 'dickforce')
+}
+
 function city_dropdown() {
     if ($(this)[0].id === 'select-city') {
     if ($(this).val() != "") {
       city1 = $(this).val()
+      d3.select('#dickforce1').remove()
+      d3.select('#pbod1').style('display', '')
+      d3.select(".panel-body1").append("img")
+        .attr('src', '/images/craigslist/'+city1+'-trigram.png')
+        .attr('id', 'dickforce1')
+        // .style('width', '150px')
+        // .style('height', '150px')
     }
   } else {
     if ($(this).val() != "") {
       city2 = $(this).val()
+      d3.select('#dickforce2').remove()
+      d3.select('#pbod2').style('display', '')
+      d3.select(".panel-body2").append("img")
+        .attr('src', '/images/craigslist/'+city2+'-trigram.png')
+        .attr('id', 'dickforce2')
+        // .style('width', '150px')
+        // .style('height', '150px')
     }
   }
-  $('div#poopchute').empty();
-  barchart('/data/dookie_craigslist/male_days.csv', 'Derp', 'Male')
-  barchart('/data/dookie_craigslist/female_days.csv', 'Derp', 'Female')
-  barchart('/data/dookie_craigslist/transgender_days.csv', 'Derp', 'Transgender')
+  if (city1 == city2) {
+    d3.select('#dickforce1').remove()
+    d3.select('#dickforce2').remove()
+    d3.select('#pbod1').style('display', '')
+    d3.select('#pbod2').style('display', 'none')
+    d3.select(".panel-body1").append("img")
+      .attr('src', '/images/craigslist/'+city1+'-trigram.png')
+      .attr('id', 'dickforce1')
+  }
+  something_drawn = true;
+  // Take out anything if its there
+  $('div#chute_male').empty();
+  $('div#chute_female').empty();
+  $('div#chute_trans').empty();
+  // display that shit with borders (which were hidden)
+  d3.select('#chute_male').style('display', '')
+  d3.select('#chute_female').style('display', '')
+  d3.select('#chute_trans').style('display', '')
+  // Pop with new shit
+  barchart('/data/dookie_craigslist/male_days.csv', '#chute_male', 'Male')
+  barchart('/data/dookie_craigslist/female_days.csv', '#chute_female', 'Female')
+  barchart('/data/dookie_craigslist/transgender_days.csv', '#chute_trans', 'Transgender')
+
 }
 
+format_me = {"atlanta":"Atlanta","austin":"Austin","boston":"Boston","chicago":"Chicago","dallas":"Dallas","denver":"Denver","detroit":"Detroit","houston":"Houston","lasvegas":"Las Vegas","losangeles":"Los Angeles","miami":"Miasma","minneapolis":"Minneapolis","newyork":"New York","orangecounty":"Orange County","philadelphia":"Philadelphia","phoenix":"Phoenix","portland":"Portland","raleigh":"Raleigh","sacramento":"Sacramento","sandiego":"Sand Diego","seattle":"Seattle","sfbay":"Bay Area","washingtondc":"Washington DC" }
 
-function barchart(filename, xlabel, title){
+function get_pop_str(data, city){
+  ret_str = " "
+  var ind = (city === city1) ? 0 : 1; 
+  var city_pop = d3.sum( data.map(function(d){ return d.cities[ind].count; } ));
+  return ": " + city_pop;
+}
+
+function barchart(filename, divname, title){
+  
+  width = $(divname).width() - margin.left - margin.right,
+  height = 300 - margin.top - margin.bottom;
+  
+  // Must do once pages is drawn
+  var x0 = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .3);
+
+  var x1 = d3.scale.ordinal();
+
+  var y = d3.scale.linear()
+      .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x0)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(formatPercent);
+
+
   var color = d3.scale.ordinal().range(['#67a9cf', '#ef8a62'])
   // var color_scale = d3.scale.ordinal().range(["#8aa236", "#7a296a", "#27576b", "#AA7539"]);
-  var svg = d3.select("div#poopchute").append("svg")
+  var svg = d3.select(divname).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -222,7 +358,7 @@ function barchart(filename, xlabel, title){
           .attr("dy", ".71em")
           .style("text-anchor", "end")
           .text("Population");
-    
+
       svg.append('text')
         .attr('y', -15)
         .attr('x', width/2)
@@ -252,7 +388,7 @@ function barchart(filename, xlabel, title){
           .data(cityNames.slice().reverse())
         .enter().append("g")
           .attr("class", "legend")
-          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+          .attr("transform", function(d, i) { return "translate(0," + (i * 20)  + ")"; });
 
       legend.append("rect")
           .attr("x", width - 18)
@@ -265,7 +401,7 @@ function barchart(filename, xlabel, title){
           .attr("y", 9)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
-          .text(function(d) { return d; });
+          .text(function(d) { return format_me[d] + get_pop_str(data, d); });
     }
   });
 }
