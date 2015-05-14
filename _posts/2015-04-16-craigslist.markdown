@@ -340,10 +340,13 @@ function city_dropdown() {
 format_me = {"Total":"Total","atlanta":"Atlanta","austin":"Austin","boston":"Boston","chicago":"Chicago","dallas":"Dallas","denver":"Denver","detroit":"Detroit","houston":"Houston","lasvegas":"Las Vegas","losangeles":"Los Angeles","miami":"Miasma","minneapolis":"Minneapolis","newyork":"New York","orangecounty":"Orange County","philadelphia":"Philadelphia","phoenix":"Phoenix","portland":"Portland","raleigh":"Raleigh","sacramento":"Sacramento","sandiego":"Sand Diego","seattle":"Seattle","sfbay":"Bay Area","washingtondc":"Washington DC" }
 
 function get_pop_str(data, city){
-  ret_str = " "
-  var ind = (city === city1) ? 0 : 1;
-  if (city1 === "") { ind = 0; }
-  var city_pop = d3.sum( data.map(function(d){ console.log(d.cities); return d.cities[ind].count; } ));
+  var city_pop = d3.sum( data.map(function(d){ 
+    var i = 0;
+    for (i = 0; i < d.cities.length; i++){
+      console.log(d.cities[i].name, city)
+      if (d.cities[i].name === city) return d.cities[i].count;
+    }} ));
+  console.log(city + ": " + city_pop)
   return ": " + city_pop;
 }
 
@@ -370,7 +373,6 @@ function barchart(filename, divname, title){
       .orient("left")
       .tickFormat(formatPercent);
 
-
   var color = d3.scale.ordinal().range(['#67a9cf', '#ef8a62'])
   // var color_scale = d3.scale.ordinal().range(["#8aa236", "#7a296a", "#27576b", "#AA7539"]);
   var svg = d3.select(divname).append("svg")
@@ -395,7 +397,7 @@ function barchart(filename, divname, title){
       data.forEach(function(d) {
         d.cities = cityNames.map(function(name) { return {name: name, value:+d[name], count:+d[name+'_count']};   });
       });
-      console.log(data)
+      // console.log(data)
 
       x0.domain(data.map(function(d) { return d.Day; }));
       x1.domain(cityNames).rangeRoundBands([0, x0.rangeBand()]);
@@ -441,7 +443,7 @@ function barchart(filename, divname, title){
           .on('mouseout', tip.hide);
 
       var legend = svg.selectAll(".legend")
-          .data(cityNames.slice().reverse())
+          .data(cityNames.slice())
         .enter().append("g")
           .attr("class", "legend")
           .attr("transform", function(d, i) { return "translate(0," + (i * 20)  + ")"; });
