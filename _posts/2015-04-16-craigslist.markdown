@@ -168,8 +168,12 @@ body {
 <h4>Marky markov generated sentences!!1</h4>
 <button type="button" id="regensentence">Regenerate</button>
 <div id="markov-city1">
+<p id="markov-city1-name" />
+<p id="markov-city1-sentence" />
 </div>
 <div id="markov-city2">
+<p id="markov-city2-name" />
+<p id="markov-city2-sentence" />
 </div>
 </div>
 <!-- Button trigger modal -->
@@ -247,12 +251,12 @@ function click_dick(){
 function new_sentences() {
   var lineNumber = Math.floor(Math.random() * 10000);
   var randomLine = city1_sentences[lineNumber];
-  d3.select('#markov-city1').append("p")
+  d3.select('#markov-city1-sentence')
     .text(randomLine);
 
   var lineNumber = Math.floor(Math.random() * 10000);
   var randomLine = city2_sentences[lineNumber];
-  d3.select('#markov-city2').append("p")
+  d3.select('#markov-city2-sentence')
     .text(randomLine);
 }
 
@@ -266,16 +270,15 @@ function city_dropdown() {
     if ($(this)[0].id === 'select-city') {
     if ($(this).val() != "") {
       city1 = $(this).val()
-      $('div#markov-city1').empty();
 
       $.get('/data/dookie_craigslist/marky/'+city1+'.txt.sentences', function(text) {
           city1_sentences = text.split("\n");
           var lineNumber = Math.floor(Math.random() * 10000);
           var randomLine = city1_sentences[lineNumber];
-          d3.select('#markov-city1').append("p")
+          d3.select('#markov-city1-name')
             .style('font-weight', 'bold')
             .text(format_me[city1]);
-          d3.select('#markov-city1').append("p")
+          d3.select('#markov-city1-sentence')
             .text(randomLine);
       });
 
@@ -299,15 +302,14 @@ function city_dropdown() {
         // .style('width', '150px')
         // .style('height', '150px')
 
-  $('div#markov-city2').empty();
   $.get('/data/dookie_craigslist/marky/'+city2+'.txt.sentences', function(text) {
     city2_sentences = text.split("\n");
     var lineNumber = Math.floor(Math.random() * 10000);
     var randomLine = city2_sentences[lineNumber];
-    d3.select('#markov-city2').append("p")
+    d3.select('#markov-city2-name')
       .style('font-weight', 'bold')
       .text(format_me[city2]);
-    d3.select('#markov-city2').append("p")
+    d3.select('#markov-city2-sentence')
       .text(randomLine);
   });
     }
