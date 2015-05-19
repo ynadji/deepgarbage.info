@@ -166,7 +166,7 @@ body {
   </div>
 </div>
 <h4>Marky markov generated sentences!!1</h4>
-<button type="button" id="regensentence">Regenerate</button>
+<button type="button" id="regensentence">Mash This</button>
 <div id="markov-city1">
 <p id="markov-city1-name" />
 <p id="markov-city1-sentence" />
